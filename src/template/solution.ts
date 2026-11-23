@@ -1,16 +1,18 @@
 import { readLines } from "#lib/input.ts";
 
-const dir = import.meta.dirname;
+const solutionDir = import.meta.dirname;
 
-const parse = (file: string) => readLines(`${dir}/${file}`);
+const processInput = (file: string) => {
+  return readLines(`${solutionDir}/${file}`);
+};
 
 const part1 = (file: string): number => {
-  const lines = parse(file);
+  const lines = processInput(file);
   return lines.length;
 };
 
 const part2 = (file: string): number => {
-  const lines = parse(file);
+  const lines = processInput(file);
   return lines.length;
 };
 
