@@ -9,6 +9,17 @@ const processInput = (file: string) => {
   return readGrid(`${solutionDir}/${file}`);
 };
 
+const ADJACENT_OFFSETS = [
+  { rOffset: -1, cOffset: -1 },
+  { rOffset: -1, cOffset: 0 },
+  { rOffset: -1, cOffset: 1 },
+  { rOffset: 0, cOffset: -1 },
+  { rOffset: 0, cOffset: 1 },
+  { rOffset: 1, cOffset: -1 },
+  { rOffset: 1, cOffset: 0 },
+  { rOffset: 1, cOffset: 1 },
+];
+
 const adjacentRolls = (grid: string[][], row: number, col: number): number => {
   let total = 0;
   for (const { rOffset, cOffset } of ADJACENT_OFFSETS) {
@@ -33,17 +44,6 @@ const part1 = (file: string): number => {
 
   return numAccessibleRolls;
 };
-
-const ADJACENT_OFFSETS = [
-  { rOffset: -1, cOffset: -1 },
-  { rOffset: -1, cOffset: 0 },
-  { rOffset: -1, cOffset: 1 },
-  { rOffset: 0, cOffset: -1 },
-  { rOffset: 0, cOffset: 1 },
-  { rOffset: 1, cOffset: -1 },
-  { rOffset: 1, cOffset: 0 },
-  { rOffset: 1, cOffset: 1 },
-];
 
 const decrementAdjacentCounts = (adjacentCountGrid: number[][], r: number, c: number): void => {
   for (const { rOffset, cOffset } of ADJACENT_OFFSETS) {
