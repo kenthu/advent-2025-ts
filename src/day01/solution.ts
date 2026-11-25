@@ -27,7 +27,7 @@ const part1 = (file: string): number => {
 
   for (const line of lines) {
     const { distance } = line;
-    pos = (pos + distance + 100) % 100;
+    pos = (pos + distance) % 100;
 
     if (pos === 0) {
       password += 1;
