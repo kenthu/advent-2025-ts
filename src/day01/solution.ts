@@ -1,17 +1,75 @@
 import { readLines } from "#lib/input.ts";
 
-const dir = import.meta.dirname;
+const solutionDir = import.meta.dirname;
 
-const parse = (file: string) => readLines(`${dir}/${file}`);
+type Direction = "L" | "R";
+type Line = { direction: Direction; distance: number };
+
+const processInput = (file: string): Line[] => {
+  return readLines(`${solutionDir}/${file}`).map((line) => {
+    if (line[0] === "L") {
+      return { direction: "L", distance: -1 * Number(line.slice(1)) };
+    } else if (line[0] === "R") {
+      return { direction: "R", distance: Number(line.slice(1)) };
+    } else {
+      throw new Error("Invalid line");
+    }
+  });
+};
 
 const part1 = (file: string): number => {
-  const lines = parse(file);
-  return lines.length;
+  const lines = processInput(file);
+
+  let pos = 50;
+  let password = 0;
+
+  for (const line of lines) {
+    const { distance } = line;
+    pos = (pos + distance + 100) % 100;
+
+    if (pos === 0) {
+      password += 1;
+    }
+  }
+
+  return password;
+};
+
+/**
+ * Group positions into zones, in such a way that crossing into a different zone is equivalent to
+ * landing on zero.
+ *
+ * When turning right, zones will be 0 to 99, 100 to 199, etc.
+ * When turning left, zones will be 1 to 100, -99 to 0, -199 to -100, etc.
+ */
+const getZone = (pos: number, direction: Direction): number => {
+  if (direction === "R") {
+    return Math.floor(pos / 100);
+  } else {
+    return Math.floor((pos - 1) / 100);
+  }
 };
 
 const part2 = (file: string): number => {
-  const lines = parse(file);
-  return lines.length;
+  const lines = processInput(file);
+
+  let pos = 50;
+  let password = 0;
+
+  for (const line of lines) {
+    const { direction, distance } = line;
+
+    const oldZone = getZone(pos, direction);
+
+    const newPos = pos + distance;
+    const newZone = getZone(newPos, direction);
+
+    password += Math.abs(newZone - oldZone);
+
+    pos = newPos;
+  }
+
+  return password;
 };
 
 console.log("p1 test", part1("test-input.txt"));
