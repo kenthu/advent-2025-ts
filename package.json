@@ -6,6 +6,8 @@
     "#lib/*": "./src/lib/*"
   },
   "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch",
     "new-day": "node scripts/new-day.ts",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
