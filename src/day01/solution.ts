@@ -1,3 +1,5 @@
+import assert from "node:assert/strict";
+
 import { readLines } from "#lib/input.ts";
 
 const solutionDir = import.meta.dirname;
@@ -76,3 +78,9 @@ console.log("p1 test", part1("test-input.txt"));
 console.log("p1     ", part1("input.txt"));
 console.log("p2 test", part2("test-input.txt"));
 console.log("p2     ", part2("input.txt"));
+
+// Answers
+assert(part1("test-input.txt") === 3);
+assert(part1("input.txt") === 1147);
+assert(part2("test-input.txt") === 6);
+assert(part2("input.txt") === 6789);
