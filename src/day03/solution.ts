@@ -8,17 +8,28 @@ const processInput = (file: string) => {
   return readLines(`${solutionDir}/${file}`);
 };
 
-// For each position, store the max of all digits on or after that position
-const getMaxDigits = (numString: string): number[] => {
-  const maxDigits: number[] = [];
+/**
+ * Find the maximum possible value from removing any single digit
+ */
+const getMaxFromRemovingDigit = (numString: string): number => {
   let currentMax = Number.MIN_SAFE_INTEGER;
 
-  for (let i = numString.length - 1; i >= 0; i--) {
-    currentMax = Math.max(currentMax, Number(numString[i]!));
-    maxDigits[i] = currentMax;
+  for (let i = 0; i < numString.length; i++) {
+    currentMax = Math.max(currentMax, Number(`${numString.slice(0, i)}${numString.slice(i + 1)}`));
   }
 
-  return maxDigits;
+  return currentMax;
+};
+
+const getMaxJoltageFromBank = (bank: string, numDigits: number): number => {
+  let currentMax = Number(bank.slice(0, numDigits));
+
+  for (let i = numDigits; i < bank.length; i++) {
+    const nextToTest = `${currentMax}${bank[i]}`;
+    currentMax = Math.max(currentMax, getMaxFromRemovingDigit(nextToTest));
+  }
+
+  return currentMax;
 };
 
 const part1 = (file: string): number => {
@@ -27,28 +38,10 @@ const part1 = (file: string): number => {
   let totalJoltage = 0;
 
   for (const bank of banks) {
-    let currentMax = Number.MIN_SAFE_INTEGER;
-
-    const maxDigits = getMaxDigits(bank);
-    for (let i = 0; i < bank.length - 1; i++) {
-      const maxToTest = Number(`${bank[i]}${maxDigits[i + 1]}`);
-      currentMax = Math.max(currentMax, maxToTest);
-    }
-
-    totalJoltage += currentMax;
+    totalJoltage += getMaxJoltageFromBank(bank, 2);
   }
 
   return totalJoltage;
-};
-
-const getMaxFrom13 = (numString: string): number => {
-  let currentMax = Number.MIN_SAFE_INTEGER;
-
-  for (let i = 0; i < numString.length; i++) {
-    currentMax = Math.max(currentMax, Number(`${numString.slice(0, i)}${numString.slice(i + 1)}`));
-  }
-
-  return currentMax;
 };
 
 /**
@@ -62,15 +55,7 @@ const part2 = (file: string): number => {
   let totalJoltage = 0;
 
   for (const bank of banks) {
-    let currentMax = Number(bank.slice(0, 12));
-
-    for (let i = 12; i < bank.length; i++) {
-      // 13 digits to find next maximum on
-      const nextToTest = `${currentMax}${bank[i]}`;
-      currentMax = Math.max(currentMax, getMaxFrom13(nextToTest));
-    }
-
-    totalJoltage += currentMax;
+    totalJoltage += getMaxJoltageFromBank(bank, 12);
   }
 
   return totalJoltage;
