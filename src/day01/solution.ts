@@ -80,7 +80,7 @@ console.log("p2 test", part2("test-input.txt"));
 console.log("p2     ", part2("input.txt"));
 
 // Answers
-assert(part1("test-input.txt") === 3);
-assert(part1("input.txt") === 1147);
-assert(part2("test-input.txt") === 6);
-assert(part2("input.txt") === 6789);
+assert.equal(part1("test-input.txt"), 3);
+assert.equal(part1("input.txt"), 1147);
+assert.equal(part2("test-input.txt"), 6);
+assert.equal(part2("input.txt"), 6789);
