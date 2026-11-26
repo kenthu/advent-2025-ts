@@ -106,20 +106,32 @@ const part1 = (file: string, numConnections: number): number => {
   );
 };
 
-// const part2 = (file: string): number => {
-//   const lines = processInput(file);
-//   return -1;
-// };
+const part2 = (file: string): number => {
+  const junctionBoxes = processInput(file);
+  const pairs = calculateDistances(junctionBoxes);
+  const circuits = initializeCircuits(junctionBoxes);
+
+  for (let i = 0; i < pairs.length; i++) {
+    const { box1, box2 } = pairs[i];
+    mergeCircuits(circuits, box2.circuitId, box1.circuitId);
+
+    if (Object.keys(circuits).length === 1) {
+      return box1.x * box2.x;
+    }
+  }
+
+  throw new Error("Connected all boxes, and still have more than one circuit!");
+};
 
 if (import.meta.main) {
   console.log("p1 test", part1("test-input.txt", 10));
   console.log("p1     ", part1("input.txt", 1000));
-  // console.log("p2 test", part2("test-input.txt"));
-  // console.log("p2     ", part2("input.txt"));
+  console.log("p2 test", part2("test-input.txt"));
+  console.log("p2     ", part2("input.txt"));
 
   // Answers
   assert.equal(part1("test-input.txt", 10), 40);
   assert.equal(part1("input.txt", 1000), 50760);
-  // assert.equal(part2("test-input.txt"), 0);
-  // assert.equal(part2("input.txt"), 0);
+  assert.equal(part2("test-input.txt"), 25272);
+  assert.equal(part2("input.txt"), 3206508875);
 }
