@@ -20,6 +20,8 @@ interface JunctionBoxPair {
   distance: number;
 }
 
+type Circuits = Record<CircuitId, Set<JunctionBox>>;
+
 const processInput = (file: string): JunctionBox[] => {
   return readLines(`${solutionDir}/${file}`).map((line, i) => {
     const triple = line.split(",").map(Number);
@@ -48,6 +50,36 @@ const calculateDistances = (junctionBoxes: JunctionBox[]): JunctionBoxPair[] => 
   return pairs;
 };
 
+/**
+ * Initialize mapping of circuitId to set of junctionBoxes in that circuit
+ */
+const initializeCircuits = (junctionBoxes: JunctionBox[]): Circuits => {
+  const circuits: Circuits = {};
+  for (const junctionBox of junctionBoxes) {
+    circuits[junctionBox.circuitId] = new Set([junctionBox]);
+  }
+  return circuits;
+};
+
+/**
+ * Combine the two circuits
+ *   - Update circuitId for all boxes in donor circuit;
+ *   - Update circuits data structure
+ */
+const mergeCircuits = (
+  circuits: Circuits,
+  donorCircuitId: CircuitId,
+  finalCircuitId: CircuitId,
+): void => {
+  if (donorCircuitId === finalCircuitId) return;
+
+  for (const boxToMove of circuits[donorCircuitId]) {
+    boxToMove.circuitId = finalCircuitId;
+    circuits[finalCircuitId].add(boxToMove);
+  }
+  delete circuits[donorCircuitId];
+};
+
 const part1 = (file: string, numConnections: number): number => {
   // Counts
   // - 1000 junction boxes
@@ -57,29 +89,11 @@ const part1 = (file: string, numConnections: number): number => {
 
   const junctionBoxes = processInput(file);
   const pairs = calculateDistances(junctionBoxes);
-
-  // Initialize mapping of circuitId to set of junctionBoxes in that circuit
-  const circuits: Record<CircuitId, Set<JunctionBox>> = {};
-  for (const junctionBox of junctionBoxes) {
-    circuits[junctionBox.circuitId] = new Set([junctionBox]);
-  }
+  const circuits = initializeCircuits(junctionBoxes);
 
   for (let i = 0; i < numConnections; i++) {
     const { box1, box2 } = pairs[i];
-
-    if (box1.circuitId === box2.circuitId) continue;
-
-    // Combine the two circuits
-    // - Update circuitId for all boxes in 2nd circuit;
-    // - Update `circuits`
-    const finalCircuitId = box1.circuitId;
-    const donorCircuitId = box2.circuitId;
-
-    for (const boxToMove of circuits[donorCircuitId]) {
-      boxToMove.circuitId = finalCircuitId;
-      circuits[finalCircuitId].add(boxToMove);
-    }
-    delete circuits[donorCircuitId];
+    mergeCircuits(circuits, box2.circuitId, box1.circuitId);
   }
 
   return (
